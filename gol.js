@@ -1,8 +1,9 @@
-var gridWidth  = 300,
-        gridHeight = 200,
-        cellWidth  = 4,
-        cellHeight = 4,
-        grid; // the grid
+var     gridWidth  = 30,
+        gridHeight = 20,
+        cellWidth  = 8,
+        cellHeight = 8,
+        grid, // the grid
+        context; // the drawing context
 
 function Cell(x, y, alive, infected) {
         this.x = x;
@@ -41,20 +42,31 @@ function Grid(w, h) {
         this.draw = function(ctx) {
                 for (var i = 0; i < h; i++) {
                         for (var j = 0; j < w; j++) {
+try {
                                 this.grid[i][j].draw(ctx);
+} catch (e) {
+    debugger;
+    console.log('got one');
+}
                         }
                 }
         };
 
         this.step = function(ctx) {
-                var nextGen = [];
-                for (var i = 0; i < h; i++) {
+                var nextGen = [], i, j;
+                for (i = 0; i < h; i++) {
                         nextGen[i] = [];
-                        for (var j = 0; j < w; j++) {
+                        for (j = 0; j < w; j++) {
                                 nextGen[i][j] = next(this.grid[i][j]);
                         }
                 }
-                this.grid = nextGen;
+                for (i = 0; i < h; i++) {
+                        nextGen[i] = [];
+                        for (j = 0; j < w; j++) {
+                            this.grid[i][j].a = nextGen[i][j];
+                        }
+                }
+                this.draw(ctx);
         };
 
 }
@@ -64,25 +76,39 @@ function Grid(w, h) {
  */
 function next(cell) {
         var alive = 0;
-        for (var i = cell.x - 1; i <= cell.x + 1; i++)
-                for (var j = cell.y - 1; j <= cell.y + 1; j++)
-                        alive += (grid[i][j].a && (i != cell.x && j != cell.y)) ? 1 : 0;
-
+        for (var i = cell.y - 1; i <= cell.y + 1; i++) {
+                for (var j = cell.x - 1; j <= cell.x + 1; j++) {
+                       if (!outOfBounds(i, j)) { 
+                            alive += (grid.grid[i][j].a && (i != cell.y && j != cell.x)) ? 1 : 0;
+                        }
+                }
+        }
         return alive == 2 || (alive == 3 && !cell.a);
+}
+
+/**
+ * Returns true if the index (i, j) is out of bounds.
+ */
+function outOfBounds(i, j) {
+    return (i < 0 || i >= gridHeight) || (j < 0 || j >= gridWidth);
+}
+
+function step() {
+   grid.step(context);
 }
 
 function start() {
         var canvas = document.createElement('canvas');
-        canvas.width  = 1200;
-        canvas.height = 1000;
+        canvas.width  = 300;
+        canvas.height = 300;
         document.body.appendChild(canvas);
-        var context = canvas.getContext('2d');
+        context = canvas.getContext('2d');
         grid = new Grid(gridWidth, gridHeight);
         grid.init();
         grid.draw(context);
         var i = 0;
         while (i++ < 10) {
-                grid.step();
+//                grid.step(context);
         }
 }
 
