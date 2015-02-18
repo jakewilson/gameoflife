@@ -37,7 +37,7 @@ function Grid(w, h) {
                         }
                 }
                 // turn on 70 random cells
-                for (var i = 0; i < 70; i++)
+                for (var i = 0; i < 200; i++)
                         this.grid[Math.floor(Math.random() * h)][Math.floor(Math.random() * w)].a = true;
         };
 
@@ -54,7 +54,7 @@ function Grid(w, h) {
                 for (i = 0; i < h; i++) {
                         nextGen[i] = [];
                         for (j = 0; j < w; j++) {
-                                if (next(this.grid[i][j])) {
+                                if ((nextGen[i][j] = next(this.grid[i][j]))) {
                                         aliveCells.push(this.grid[i][j]);
                                 }
                         }
@@ -83,7 +83,7 @@ function next(cell) {
                 }
         }
         if (cell.a) {
-            return nrbs === 2 || nbrs === 3;
+            return nbrs === 2 || nbrs === 3;
         } else {
             return nbrs === 3;
         }
