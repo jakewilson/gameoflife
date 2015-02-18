@@ -3,7 +3,8 @@ var     gridWidth  = 100,
         cellWidth  = 4,
         cellHeight = 4,
         grid, // the grid
-        context; // the drawing context
+        context, // the drawing context
+        stopStepping = false;
 
 function Cell(x, y, alive, infected) {
         this.x = x;
@@ -14,7 +15,7 @@ function Cell(x, y, alive, infected) {
         this.i = infected;
         this.draw = function(ctx) {
                 if (this.a) {
-                        ctx.fillStyle = 'rgb(150, 150, 150)';
+                        ctx.fillStyle = 'rgb(200, 200, 200)';
                 } else {
                         ctx.fillStyle = 'rgb(0, 0, 0)';
                 }
@@ -93,11 +94,26 @@ function outOfBounds(i, j) {
     return (i < 0 || i >= gridHeight) || (j < 0 || j >= gridWidth);
 }
 
+// Simulates one time step
 function step() {
    grid.step(context);
 }
 
+// Contionuously steps until the user clicks 'stop'
 function start() {
+    stopStepping = false;
+    var i = 0;
+    while (i < 10) {
+        setTimeout(step(), 200);
+        i++;
+    }
+}
+
+function stop() {
+    stopStepping = true;
+}
+
+function init() {
         var canvas = document.createElement('canvas');
         canvas.width  = gridWidth * cellWidth;
         canvas.height  = gridHeight * cellHeight;
@@ -107,9 +123,6 @@ function start() {
         grid.init();
         grid.draw(context);
         var i = 0;
-        while (i++ < 10) {
-//                grid.step(context);
-        }
 }
 
-start();
+init();
