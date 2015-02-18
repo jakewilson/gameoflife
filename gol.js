@@ -1,7 +1,7 @@
-var     gridWidth  = 30,
-        gridHeight = 20,
-        cellWidth  = 8,
-        cellHeight = 8,
+var     gridWidth  = 100,
+        gridHeight = 100,
+        cellWidth  = 4,
+        cellHeight = 4,
         grid, // the grid
         context; // the drawing context
 
@@ -14,11 +14,11 @@ function Cell(x, y, alive, infected) {
         this.i = infected;
         this.draw = function(ctx) {
                 if (this.a) {
-                        ctx.fillStyle = 'rgb(255, 255, 255)';
+                        ctx.fillStyle = 'rgb(150, 150, 150)';
                 } else {
                         ctx.fillStyle = 'rgb(0, 0, 0)';
                 }
-                ctx.fillRect(this.x, this.y, this.w, this.h);
+                ctx.fillRect(this.x * this.w, this.y * this.h, this.w, this.h);
         };
 }
 
@@ -31,7 +31,7 @@ function Grid(w, h) {
                 for (var i = 0; i < h; i++) {
                         this.grid[i] = [];
                         for (var j = 0; j < w; j++) {
-                                this.grid[i][j] = new Cell(j * cellWidth, i * cellHeight, false, false);
+                                this.grid[i][j] = new Cell(j, i, false, false);
                         }
                 }
                 // turn on 70 random cells
@@ -42,12 +42,7 @@ function Grid(w, h) {
         this.draw = function(ctx) {
                 for (var i = 0; i < h; i++) {
                         for (var j = 0; j < w; j++) {
-try {
                                 this.grid[i][j].draw(ctx);
-} catch (e) {
-    debugger;
-    console.log('got one');
-}
                         }
                 }
         };
@@ -60,8 +55,8 @@ try {
                                 nextGen[i][j] = next(this.grid[i][j]);
                         }
                 }
+                console.log('done computing next');
                 for (i = 0; i < h; i++) {
-                        nextGen[i] = [];
                         for (j = 0; j < w; j++) {
                             this.grid[i][j].a = nextGen[i][j];
                         }
@@ -75,15 +70,20 @@ try {
  * Returns the state of a cell in the next generation
  */
 function next(cell) {
-        var alive = 0;
+        var nbrs = 0;
         for (var i = cell.y - 1; i <= cell.y + 1; i++) {
                 for (var j = cell.x - 1; j <= cell.x + 1; j++) {
                        if (!outOfBounds(i, j)) { 
-                            alive += (grid.grid[i][j].a && (i != cell.y && j != cell.x)) ? 1 : 0;
+                            nbrs += (grid.grid[i][j].a && (i != cell.y || j != cell.x)) ? 1 : 0;
                         }
                 }
         }
-        return alive == 2 || (alive == 3 && !cell.a);
+        var ret = false;
+        if (nbrs == 2 || nbrs == 3)
+            ret = true;
+        else if (cell.a == false && nbrs == 3)
+            ret = true;
+        return ret;
 }
 
 /**
@@ -99,8 +99,8 @@ function step() {
 
 function start() {
         var canvas = document.createElement('canvas');
-        canvas.width  = 300;
-        canvas.height = 300;
+        canvas.width  = gridWidth * cellWidth;
+        canvas.height  = gridHeight * cellHeight;
         document.body.appendChild(canvas);
         context = canvas.getContext('2d');
         grid = new Grid(gridWidth, gridHeight);
