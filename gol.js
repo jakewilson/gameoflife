@@ -4,7 +4,8 @@ var     gridWidth  = 100,
         cellHeight = 4,
         grid, // the grid
         context, // the drawing context
-        stopStepping = false;
+        stopStepping = false,
+        aliveCells = []; // list for holding all cells that will be alive on the next time step
 
 function Cell(x, y, alive, infected) {
         this.x = x;
@@ -53,7 +54,9 @@ function Grid(w, h) {
                 for (i = 0; i < h; i++) {
                         nextGen[i] = [];
                         for (j = 0; j < w; j++) {
-                                nextGen[i][j] = next(this.grid[i][j]);
+                                if (next(this.grid[i][j])) {
+                                        aliveCells.push(this.grid[i][j]);
+                                }
                         }
                 }
                 console.log('done computing next');
@@ -79,12 +82,11 @@ function next(cell) {
                         }
                 }
         }
-        var ret = false;
-        if (nbrs == 2 || nbrs == 3)
-            ret = true;
-        else if (cell.a == false && nbrs == 3)
-            ret = true;
-        return ret;
+        if (cell.a) {
+            return nrbs === 2 || nbrs === 3;
+        } else {
+            return nbrs === 3;
+        }
 }
 
 /**
