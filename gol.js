@@ -9,13 +9,12 @@ var     gridWidth  = 100,
         isMouseDown = false;
         aliveCells = []; // list for holding all cells that will be alive on the next time step
 
-function Cell(x, y, alive, infected) {
+function Cell(x, y, alive) {
         this.x = x;
         this.y = y;
         this.w = cellWidth;
         this.h = cellHeight;
         this.a = alive;
-        this.i = infected;
         this.draw = function(ctx) {
                 if (this.a) {
                         ctx.fillStyle = 'rgb(200, 200, 200)';
@@ -38,7 +37,7 @@ function Grid(w, h) {
                 for (var i = 0; i < h; i++) {
                         this.grid[i] = [];
                         for (var j = 0; j < w; j++) {
-                                this.grid[i][j] = new Cell(j, i, false, false);
+                                this.grid[i][j] = new Cell(j, i, false);
                         }
                 }
                 // turn on 70 random cells
