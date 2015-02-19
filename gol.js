@@ -1,7 +1,8 @@
 var     gridWidth  = 100,
         gridHeight = 100,
-        cellWidth  = 4,
-        cellHeight = 4,
+        cellWidth  = 6,
+        cellHeight = 6,
+        canvas,
         grid, // the grid
         context, // the drawing context
         stopStepping = false,
@@ -22,6 +23,9 @@ function Cell(x, y, alive, infected) {
                 }
                 ctx.fillRect(this.x * this.w, this.y * this.h, this.w, this.h);
         };
+        this.toggle = function() {
+            this.a = !this.a;
+        }
 }
 
 function Grid(w, h) {
@@ -115,10 +119,19 @@ function stop() {
     stopStepping = true;
 }
 
+function mousedown(e) {
+    var canvasX = e.pageX - canvas.offsetLeft,
+        canvasY = e.pageY - canvas.offsetTop;
+    var cell = grid.grid[Math.floor(canvasY / cellHeight)][Math.floor(canvasX / cellWidth)];
+    cell.toggle();
+    cell.draw(context);
+}
+
 function init() {
-        var canvas = document.createElement('canvas');
+        canvas = document.createElement('canvas');
         canvas.width  = gridWidth * cellWidth;
         canvas.height  = gridHeight * cellHeight;
+        canvas.addEventListener('mousedown', mousedown, false);
         document.body.appendChild(canvas);
         context = canvas.getContext('2d');
         grid = new Grid(gridWidth, gridHeight);
