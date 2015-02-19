@@ -6,6 +6,7 @@ var     gridWidth  = 100,
         grid, // the grid
         context, // the drawing context
         stopStepping = false,
+        isMouseDown = false;
         aliveCells = []; // list for holding all cells that will be alive on the next time step
 
 function Cell(x, y, alive, infected) {
@@ -110,7 +111,7 @@ function start() {
     stopStepping = false;
     var i = 0;
     while (i < 10) {
-        setTimeout(step(), 200);
+        setTimeout(step(), 500);
         i++;
     }
 }
@@ -120,11 +121,21 @@ function stop() {
 }
 
 function mousedown(e) {
-    var canvasX = e.pageX - canvas.offsetLeft,
-        canvasY = e.pageY - canvas.offsetTop;
-    var cell = grid.grid[Math.floor(canvasY / cellHeight)][Math.floor(canvasX / cellWidth)];
+    var canvasX = e.pageX - canvas.offsetLeft, canvasY = e.pageY - canvas.offsetTop,
+    cell = grid.grid[Math.floor(canvasY / cellHeight)][Math.floor(canvasX / cellWidth)];
+    isMouseDown = true;
     cell.toggle();
     cell.draw(context);
+}
+
+function mouseup(e) {
+    isMouseDown = false;
+}
+
+function mousemove(e) {
+    if (isMouseDown) {
+        mousedown(e);
+    }
 }
 
 function init() {
@@ -132,6 +143,8 @@ function init() {
         canvas.width  = gridWidth * cellWidth;
         canvas.height  = gridHeight * cellHeight;
         canvas.addEventListener('mousedown', mousedown, false);
+        canvas.addEventListener('mouseup', mouseup, false);
+        canvas.addEventListener('mousemove', mousemove, false);
         document.body.appendChild(canvas);
         context = canvas.getContext('2d');
         grid = new Grid(gridWidth, gridHeight);
