@@ -2,11 +2,12 @@ var     gridWidth  = 100,
         gridHeight = 100,
         cellWidth  = 6,
         cellHeight = 6,
+        alivePercentage = 10,
         canvas,
         grid, // the grid
         context, // the drawing context
         stopStepping = false,
-        isMouseDown = false;
+        isMouseDown = false,
         aliveCells = []; // list for holding all cells that will be alive on the next time step
 
 function Cell(x, y, alive) {
@@ -40,8 +41,8 @@ function Grid(w, h) {
                                 this.grid[i][j] = new Cell(j, i, false);
                         }
                 }
-                // turn on 70 random cells
-                for (var i = 0; i < 200; i++)
+                // turns on 'alivePercentage' percent of cells
+                for (var i = 0; i < Math.floor(w * h * (alivePercentage / 100.0)); i++)
                         this.grid[Math.floor(Math.random() * h)][Math.floor(Math.random() * w)].a = true;
         };
 
