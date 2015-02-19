@@ -6,8 +6,13 @@ var     gridWidth  = 100,
         canvas,
         grid, // the grid
         context, // the drawing context
-        stopStepping = false,
+        running = false,
         isMouseDown = false,
+        state = {
+            ALIVE: 0,
+            DEAD:  1
+        },
+        fillStyles = ['rgb(200, 200, 200)', 'rgb(0, 0, 0)'];
         aliveCells = []; // list for holding all cells that will be alive on the next time step
 
 function Cell(x, y, alive) {
@@ -17,11 +22,7 @@ function Cell(x, y, alive) {
         this.h = cellHeight;
         this.a = alive;
         this.draw = function(ctx) {
-                if (this.a) {
-                        ctx.fillStyle = 'rgb(200, 200, 200)';
-                } else {
-                        ctx.fillStyle = 'rgb(0, 0, 0)';
-                }
+                ctx.fillStyle = fillStyles[this.a];
                 ctx.fillRect(this.x * this.w, this.y * this.h, this.w, this.h);
         };
         this.toggle = function() {
@@ -38,12 +39,12 @@ function Grid(w, h) {
                 for (var i = 0; i < h; i++) {
                         this.grid[i] = [];
                         for (var j = 0; j < w; j++) {
-                                this.grid[i][j] = new Cell(j, i, false);
+                                this.grid[i][j] = new Cell(j, i, state.DEAD);
                         }
                 }
                 // turns on 'alivePercentage' percent of cells
                 for (var i = 0; i < Math.floor(w * h * (alivePercentage / 100.0)); i++)
-                        this.grid[Math.floor(Math.random() * h)][Math.floor(Math.random() * w)].a = true;
+                        this.grid[Math.floor(Math.random() * h)][Math.floor(Math.random() * w)].a = state.ALIVE;
         };
 
         this.draw = function(ctx) {
@@ -64,7 +65,6 @@ function Grid(w, h) {
                                 }
                         }
                 }
-                console.log('done computing next');
                 for (i = 0; i < h; i++) {
                         for (j = 0; j < w; j++) {
                             this.grid[i][j].a = nextGen[i][j];
@@ -83,14 +83,14 @@ function next(cell) {
         for (var i = cell.y - 1; i <= cell.y + 1; i++) {
                 for (var j = cell.x - 1; j <= cell.x + 1; j++) {
                        if (!outOfBounds(i, j)) { 
-                            nbrs += (grid.grid[i][j].a && (i != cell.y || j != cell.x)) ? 1 : 0;
+                            nbrs += ((grid.grid[i][j].a === state.ALIVE) && (i != cell.y || j != cell.x)) ? 1 : 0;
                         }
                 }
         }
-        if (cell.a) {
-            return nbrs === 2 || nbrs === 3;
+        if (cell.a === state.ALIVE) {
+            return (nbrs === 2 || nbrs === 3) ? state.ALIVE : state.DEAD;
         } else {
-            return nbrs === 3;
+            return (nbrs === 3) ? state.ALIVE : state.DEAD;
         }
 }
 
@@ -103,21 +103,17 @@ function outOfBounds(i, j) {
 
 // Simulates one time step
 function step() {
-   grid.step(context);
+    grid.step(context);
 }
 
 // Contionuously steps until the user clicks 'stop'
 function start() {
-    stopStepping = false;
-    var i = 0;
-    while (i < 10) {
-        setTimeout(step(), 500);
-        i++;
-    }
+    running = true;
+    step();
 }
 
 function stop() {
-    stopStepping = true;
+    running = false;
 }
 
 function mousedown(e) {
@@ -150,7 +146,6 @@ function init() {
         grid = new Grid(gridWidth, gridHeight);
         grid.init();
         grid.draw(context);
-        var i = 0;
 }
 
 init();
