@@ -12,7 +12,9 @@ var     gridWidth  = 100,
             ALIVE: 0,
             DEAD:  1
         },
-        fillStyles = ['rgb(200, 200, 200)', 'rgb(0, 0, 0)'];
+        fillStyles = ['rgb(200, 200, 200)', 'rgb(0, 0, 0)'],
+        intervalID, // the id for the drawing interval
+        waitTime, // time in between draws in milliseconds
         aliveCells = []; // list for holding all cells that will be alive on the next time step
 
 function Cell(x, y, alive) {
@@ -30,47 +32,50 @@ function Cell(x, y, alive) {
         }
 }
 
-function Grid(w, h) {
+function Grid(w, h, ctx) {
         this.count = 0;
         this.w = w;
         this.h = h;
+        this.ctx = ctx;
+        this.me = this;
         this.init = function() {
                 this.grid = [];
-                for (var i = 0; i < h; i++) {
+                for (var i = 0; i < this.h; i++) {
                         this.grid[i] = [];
-                        for (var j = 0; j < w; j++) {
+                        for (var j = 0; j < this.w; j++) {
                                 this.grid[i][j] = new Cell(j, i, state.DEAD);
                         }
                 }
                 // turns on 'alivePercentage' percent of cells
-                for (var i = 0; i < Math.floor(w * h * (alivePercentage / 100.0)); i++)
+                for (var i = 0; i < Math.floor(this.w * this.h * (alivePercentage / 100.0)); i++)
                         this.grid[Math.floor(Math.random() * h)][Math.floor(Math.random() * w)].a = state.ALIVE;
         };
 
-        this.draw = function(ctx) {
-                for (var i = 0; i < h; i++) {
-                        for (var j = 0; j < w; j++) {
-                                this.grid[i][j].draw(ctx);
+        this.draw = function() {
+                for (var i = 0; i < grid.h; i++) {
+                        for (var j = 0; j < grid.w; j++) {
+                                grid.grid[i][j].draw(ctx);
                         }
                 }
         };
 
-        this.step = function(ctx) {
+        // moves the grid forward one time step
+        this.step = function() {
                 var nextGen = [], i, j;
-                for (i = 0; i < h; i++) {
+                for (i = 0; i < grid.h; i++) {
                         nextGen[i] = [];
-                        for (j = 0; j < w; j++) {
-                                if ((nextGen[i][j] = next(this.grid[i][j]))) {
-                                        aliveCells.push(this.grid[i][j]);
+                        for (j = 0; j < grid.w; j++) {
+                                if ((nextGen[i][j] = next(grid.grid[i][j]))) {
+                                        aliveCells.push(grid.grid[i][j]);
                                 }
                         }
                 }
-                for (i = 0; i < h; i++) {
-                        for (j = 0; j < w; j++) {
-                            this.grid[i][j].a = nextGen[i][j];
+                for (i = 0; i < grid.h; i++) {
+                        for (j = 0; j < grid.w; j++) {
+                            grid.grid[i][j].a = nextGen[i][j];
                         }
                 }
-                this.draw(ctx);
+               grid.draw();
         };
 
 }
@@ -101,19 +106,21 @@ function outOfBounds(i, j) {
     return (i < 0 || i >= gridHeight) || (j < 0 || j >= gridWidth);
 }
 
-// Simulates one time step
 function step() {
-    grid.step(context);
+    grid.step();
 }
 
 // Contionuously steps until the user clicks 'stop'
 function start() {
     running = true;
-    step();
+    intervalID = setInterval(grid.step, 500);
 }
 
 function stop() {
-    running = false;
+    if (running) {
+        running = false;
+        clearInterval(intervalID);
+    }
 }
 
 function mousedown(e) {
@@ -134,6 +141,10 @@ function mousemove(e) {
     }
 }
 
+function printSomething() {
+    console.log('again');
+}
+
 function init() {
         canvas = document.createElement('canvas');
         canvas.width  = gridWidth * cellWidth;
@@ -143,9 +154,11 @@ function init() {
         canvas.addEventListener('mousemove', mousemove, false);
         document.body.appendChild(canvas);
         context = canvas.getContext('2d');
-        grid = new Grid(gridWidth, gridHeight);
+        waitTime = 50;
+        grid = new Grid(gridWidth, gridHeight, context);
         grid.init();
-        grid.draw(context);
+        grid.draw();
+        //setInterval(printSomething, 500);
 }
 
 init();
