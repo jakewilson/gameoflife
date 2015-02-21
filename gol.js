@@ -1,8 +1,8 @@
-var     gridWidth  = 100,
-        gridHeight = 100,
-        cellWidth  = 6,
-        cellHeight = 6,
-        alivePercentage,
+var     gridWidth  = 400,
+        gridHeight = 200,
+        cellWidth  = 3,
+        cellHeight = 3,
+        alivePercentage = 10,
         canvas,
         grid, // the grid
         context, // the drawing context
@@ -113,7 +113,7 @@ function step() {
 // Contionuously steps until the user clicks 'stop'
 function start() {
     running = true;
-    intervalID = setInterval(grid.step, 500);
+    intervalID = setInterval(grid.step, waitTime);
 }
 
 function stop() {
@@ -146,20 +146,18 @@ function printSomething() {
 }
 
 function init() {
-        canvas = document.createElement('canvas');
+        canvas = document.getElementById('canvas');
         canvas.width  = gridWidth * cellWidth;
         canvas.height  = gridHeight * cellHeight;
         canvas.addEventListener('mousedown', mousedown, false);
         canvas.addEventListener('mouseup', mouseup, false);
         canvas.addEventListener('mousemove', mousemove, false);
         document.body.appendChild(canvas);
-        alivePercentage = document.getElementById('aliveInput').value;
         context = canvas.getContext('2d');
-        waitTime = 50;
+        waitTime = 500;
         grid = new Grid(gridWidth, gridHeight, context);
         grid.init();
         grid.draw();
-        //setInterval(printSomething, 500);
 }
 
 //init();

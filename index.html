@@ -1,15 +1,15 @@
 <html>
 	<head>
         <title>Game of Life</title>
+        <link rel="stylesheet" href="style.css" />
+        <script src="gol.js"></script>
 	</head>
 	<body onload="init()">
-        <script src="gol.js"></script>
+        <canvas id="canvas"></canvas>
         <div id="inputDiv">
             <button  onclick="step()" width="20">Step</button>
             <button  onclick="start()" width="20">Start</button>
             <button  onclick="stop()" width="20">Stop</button>
-            Initial percentage of cells alive:
-            <input type="text" id="aliveInput" value="10"></input>
         </div>
 	</body>
 </html>
