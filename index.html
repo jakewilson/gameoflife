@@ -2,10 +2,14 @@
 	<head>
         <title>Game of Life</title>
 	</head>
-	<body>
+	<body onload="init()">
         <script src="gol.js"></script>
-        <button  onclick="step()" width="20">Step</button>
-        <button  onclick="start()" width="20">Start</button>
-        <button  onclick="stop()" width="20">Stop</button>
+        <div id="inputDiv">
+            <button  onclick="step()" width="20">Step</button>
+            <button  onclick="start()" width="20">Start</button>
+            <button  onclick="stop()" width="20">Stop</button>
+            Initial percentage of cells alive:
+            <input type="text" id="aliveInput" value="10"></input>
+        </div>
 	</body>
 </html>

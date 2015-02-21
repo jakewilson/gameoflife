@@ -2,7 +2,7 @@ var     gridWidth  = 100,
         gridHeight = 100,
         cellWidth  = 6,
         cellHeight = 6,
-        alivePercentage = 10,
+        alivePercentage,
         canvas,
         grid, // the grid
         context, // the drawing context
@@ -153,6 +153,7 @@ function init() {
         canvas.addEventListener('mouseup', mouseup, false);
         canvas.addEventListener('mousemove', mousemove, false);
         document.body.appendChild(canvas);
+        alivePercentage = document.getElementById('aliveInput').value;
         context = canvas.getContext('2d');
         waitTime = 50;
         grid = new Grid(gridWidth, gridHeight, context);
@@ -161,4 +162,4 @@ function init() {
         //setInterval(printSomething, 500);
 }
 
-init();
+//init();
