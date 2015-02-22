@@ -106,10 +106,17 @@ function outOfBounds(i, j) {
     return (i < 0 || i >= gridHeight) || (j < 0 || j >= gridWidth);
 }
 
+/**
+ * Event listener for the 'step' button
+ */
 function step() {
-    grid.step();
+    if (!running)
+        grid.step();
 }
 
+/**
+ * Event listener for the 'start'/'stop' button
+ */
 function toggle() {
     running = !running;
     if (running) {
