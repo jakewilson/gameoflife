@@ -1,8 +1,8 @@
-var     gridWidth  = 300,
-        gridHeight = 170,
-        cellWidth  = 3,
-        cellHeight = 3,
-        alivePercentage = 5,
+var     gridWidth  = 200,
+        gridHeight = 100,
+        cellWidth  = 5,
+        cellHeight = 5,
+        alivePercentage = 0,
         canvas,
         grid, // the grid
         context, // the drawing context
@@ -23,12 +23,12 @@ function Cell(x, y, alive) {
         this.w = cellWidth;
         this.h = cellHeight;
         this.a = alive;
-        this.draw = function(ctx) {
-                ctx.fillStyle = fillStyles[this.a];
-                ctx.fillRect(this.x * this.w, this.y * this.h, this.w, this.h);
+        this.draw = function() {
+                context.fillStyle = fillStyles[this.a];
+                context.fillRect(this.x * this.w, this.y * this.h, this.w, this.h);
         };
         this.toggle = function() {
-            this.a = !this.a;
+            this.a = this.a === state.ALIVE ? state.DEAD : state.ALIVE;
         }
 }
 
@@ -122,11 +122,12 @@ function toggle() {
 }
 
 function mousedown(e) {
-    var canvasX = e.pageX - canvas.offsetLeft, canvasY = e.pageY - canvas.offsetTop,
-    cell = grid.grid[Math.floor(canvasY / cellHeight)][Math.floor(canvasX / cellWidth)];
+    var canvasX = e.pageX - canvas.offsetLeft, canvasY = e.pageY - canvas.offsetTop;
+    var cellY = Math.floor(canvasY / cellHeight), cellX = Math.floor(canvasX / cellWidth);
+    cell = grid.grid[cellY][cellX];
     isMouseDown = true;
     cell.toggle();
-    cell.draw(context);
+    cell.draw();
 }
 
 function mouseup(e) {
@@ -139,16 +140,13 @@ function mousemove(e) {
     }
 }
 
-function printSomething() {
-    console.log('again');
-}
-
 function init() {
         canvas = document.getElementById('canvas');
         canvas.width  = gridWidth * cellWidth;
         canvas.height = gridHeight * cellHeight;
         canvas.addEventListener('mousedown', mousedown, false);
         canvas.addEventListener('mouseup', mouseup, false);
+        canvas.addEventListener('mouseout', mouseup, false);
         canvas.addEventListener('mousemove', mousemove, false);
         context = canvas.getContext('2d');
         waitTime = 500;
