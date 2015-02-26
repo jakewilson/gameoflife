@@ -50,8 +50,11 @@ function Grid(w, h, ctx, url) {
                 // turn on a profile, if any
                 var regex = /[?](.+)/i;
                 if (regex.test(url)) {
-                    var profile = decodeURIComponent(url.split(regex)[1]);
-                    console.log(JSON.parse(profile));
+                    var profile = JSON.parse(decodeURIComponent(url.split(regex)[1]));
+                    // turn on the cells specified in the profile
+                    for (var i = 0; i < profile.length; i++) {
+                        this.grid[profile[i][0]][profile[i][1]].a = state.ALIVE;
+                    }
                 }
         };
 
