@@ -32,7 +32,7 @@ function Cell(x, y, alive) {
         }
 }
 
-function Grid(w, h, ctx) {
+function Grid(w, h, ctx, url) {
         this.count = 0;
         this.w = w;
         this.h = h;
@@ -46,9 +46,13 @@ function Grid(w, h, ctx) {
                                 this.grid[i][j] = new Cell(j, i, state.DEAD);
                         }
                 }
-                // turns on 'alivePercentage' percent of cells
-                for (var i = 0; i < Math.floor(this.w * this.h * (alivePercentage / 100.0)); i++)
-                        this.grid[Math.floor(Math.random() * h)][Math.floor(Math.random() * w)].a = state.ALIVE;
+
+                // turn on a profile, if any
+                var regex = /([?])(.*)/i;
+                if (regex.test(url)) {
+                    var profile = url.replace(regex, '$2');
+                    console.log(profile);
+                }
         };
 
         this.draw = function() {
@@ -157,7 +161,7 @@ function init() {
         canvas.addEventListener('mousemove', mousemove, false);
         context = canvas.getContext('2d');
         waitTime = 500;
-        grid = new Grid(gridWidth, gridHeight, context);
+        grid = new Grid(gridWidth, gridHeight, context, document.URL.toString());
         grid.init();
         grid.draw();
 }
