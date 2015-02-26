@@ -17,6 +17,8 @@ var     gridWidth  = 200,
         waitTime, // time in between draws in milliseconds
         aliveCells = []; // list for holding all cells that will be alive on the next time step
 
+var profiles = ['Bomb', 'Tree'];
+
 function Cell(x, y, alive) {
         this.x = x;
         this.y = y;
@@ -154,6 +156,22 @@ function mousemove(e) {
     }
 }
 
+/**
+ * Adds the possible profiles to the profile select element
+ * in the markup.
+ */
+function addProfiles() {
+    var profileSelect = document.getElementById('profileSelect'), i = 0, html = '';
+    for (i = 0; i < profiles.length; i++) {
+        html += '<option value="' + i + '">' + profiles[i] + '</option>';
+    }
+    profileSelect.innerHTML = html;
+}
+
+function initProfile() {
+
+}
+
 function init() {
         canvas = document.getElementById('canvas');
         canvas.width  = gridWidth * cellWidth;
@@ -163,6 +181,7 @@ function init() {
         canvas.addEventListener('mouseout', mouseup, false);
         canvas.addEventListener('mousemove', mousemove, false);
         context = canvas.getContext('2d');
+        addProfiles();
         waitTime = 500;
         grid = new Grid(gridWidth, gridHeight, context, document.URL);
         grid.init();
