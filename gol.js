@@ -48,10 +48,10 @@ function Grid(w, h, ctx, url) {
                 }
 
                 // turn on a profile, if any
-                var regex = /([?])(.*)/i;
+                var regex = /[?](.+)/i;
                 if (regex.test(url)) {
-                    var profile = url.replace(regex, '$2');
-                    console.log(profile);
+                    var profile = decodeURIComponent(url.split(regex)[1]);
+                    console.log(JSON.parse(profile));
                 }
         };
 
@@ -161,7 +161,7 @@ function init() {
         canvas.addEventListener('mousemove', mousemove, false);
         context = canvas.getContext('2d');
         waitTime = 500;
-        grid = new Grid(gridWidth, gridHeight, context, document.URL.toString());
+        grid = new Grid(gridWidth, gridHeight, context, document.URL);
         grid.init();
         grid.draw();
 }
