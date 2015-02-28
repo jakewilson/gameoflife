@@ -206,3 +206,7 @@ function init() {
         grid.init();
         grid.draw();
 }
+
+window.onload = function() {
+    init();
+}
