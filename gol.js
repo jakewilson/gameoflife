@@ -14,7 +14,7 @@ var gridWidth  = 200,
     },
     fillStyles = ['rgb(200, 200, 200)', 'rgb(0, 0, 0)'],
     intervalID, // the id for the drawing interval
-    waitTime, // time in between draws in milliseconds
+    waitTime = 500, // time in between draws in milliseconds
     aliveCells = []; // list for holding all cells that will be alive on the next time step
 
 var profileNames = ['Bomb', 'Tree'];
@@ -180,7 +180,7 @@ function addProfiles() {
 function initProfile(p) {
     // turn on the cells specified in the profile
     for (var i = 0; i < p.length; i++) {
-        this.grid.grid[p[i][0]][p[i][1]].a = state.ALIVE;
+        grid.grid[p[i][0]][p[i][1]].a = state.ALIVE;
     }
 }
 
@@ -188,20 +188,26 @@ function selectProfile(){
     // get the profile selected
     var idx = document.getElementById('profileSelect').selectedIndex;
     initProfile(profiles[profileNames[idx]]);
-    this.grid.draw();
+    grid.draw();
+}
+
+function addEventListeners() {
+    canvas.addEventListener('mousedown', mousedown, false);
+    canvas.addEventListener('mouseup', mouseup, false);
+    canvas.addEventListener('mouseout', mouseup, false);
+    canvas.addEventListener('mousemove', mousemove, false);
+    document.getElementById('toggle').onclick = toggle;
+    document.getElementById('step').onclick = step;
+    document.getElementById('profileSelect').onclick = selectProfile;
 }
 
 function init() {
     canvas = document.getElementById('canvas');
     canvas.width  = gridWidth * cellWidth;
     canvas.height = gridHeight * cellHeight;
-    canvas.addEventListener('mousedown', mousedown, false);
-    canvas.addEventListener('mouseup', mouseup, false);
-    canvas.addEventListener('mouseout', mouseup, false);
-    canvas.addEventListener('mousemove', mousemove, false);
     context = canvas.getContext('2d');
+    addEventListeners();
     addProfiles();
-    waitTime = 500;
     grid = new Grid(gridWidth, gridHeight, context, document.URL);
     grid.init();
     grid.draw();
