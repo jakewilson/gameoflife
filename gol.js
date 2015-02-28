@@ -17,7 +17,14 @@ var     gridWidth  = 200,
         waitTime, // time in between draws in milliseconds
         aliveCells = []; // list for holding all cells that will be alive on the next time step
 
-var profiles = ['Bomb', 'Tree'];
+var profileNames = ['Bomb', 'Tree'];
+var centerY = gridHeight / 2, centerX = gridWidth / 2;
+var profiles = {
+    'Bomb': [
+            [centerY, centerX]
+            ],
+    'Tree': []
+};
 
 function Cell(x, y, alive) {
         this.x = x;
@@ -58,12 +65,7 @@ function Grid(w, h, ctx, url) {
                     } catch (e) {
                         console.log('Invalid JSON.');
                     }
-                    if (profile.length > 0) {
-                        // turn on the cells specified in the profile
-                        for (var i = 0; i < profile.length; i++) {
-                            this.grid[profile[i][0]][profile[i][1]].a = state.ALIVE;
-                        }
-                    }
+                    initProfile(profile);
                 }
         };
 
@@ -169,14 +171,24 @@ function mousemove(e) {
  */
 function addProfiles() {
     var profileSelect = document.getElementById('profileSelect'), i = 0, html = '';
-    for (i = 0; i < profiles.length; i++) {
-        html += '<option value="' + i + '">' + profiles[i] + '</option>';
+    for (i = 0; i < profileNames.length; i++) {
+        html += '<option value="' + i + '">' + profileNames[i] + '</option>';
     }
     profileSelect.innerHTML = html;
 }
 
-function initProfile() {
+function initProfile(p) {
+    // turn on the cells specified in the profile
+    for (var i = 0; i < p.length; i++) {
+        this.grid.grid[p[i][0]][p[i][1]].a = state.ALIVE;
+    }
+}
 
+function selectProfile(){
+    // get the profile selected
+    var idx = document.getElementById('profileSelect').selectedIndex;
+    initProfile(profiles[profileNames[idx]]);
+    this.grid.draw();
 }
 
 function init() {
