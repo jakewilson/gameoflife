@@ -198,7 +198,18 @@ function addEventListeners() {
     canvas.addEventListener('mousemove', mousemove, false);
     document.getElementById('toggle').onclick = toggle;
     document.getElementById('step').onclick = step;
+    document.getElementById('clear').onclick = clear;
     document.getElementById('profileSelect').onclick = selectProfile;
+}
+
+function clear() {
+    // iterate through the grid, if a cell is 'on', turn it 'off'
+    for (var i = 0; i < grid.h; i++)
+        for (var j = 0; j < grid.w; j++)
+            if (grid.grid[i][j].a === state.ALIVE)
+                grid.grid[i][j].toggle();
+
+    grid.draw();
 }
 
 function init() {
